@@ -1,35 +1,25 @@
-<html>
 
-  <head>
-
-    <title>To-Do lists</title>
-
-  </head>
-
-  <body>
-
-    <h1>Your To-Do list</h1>
-
-    <form method="POST" action="/lists/{{ list.id }}/add_item">
-
-      <input name="item_text" id="id_new_item" placeholder="Enter a to-do item" />
-
-      {% csrf_token %}
-
-    </form>
+{% extends 'base.html' %}
 
 
 
-    <table id="id_list_table">
+{% block header_text %}Your To-Do list{% endblock %}
 
-      {% for item in list.item_set.all %}
 
-        <tr><td>{{ forloop.counter }}: {{ item.text }}</td></tr>
+{% block form_action %}{% url 'view_list' list.id %}{% endblock %}
 
-      {% endfor %}
 
-    </table>
 
-  </body>
+{% block table %}
 
-</html>
+  <table id="id_list_table" class="table">
+
+    {% for item in list.item_set.all %}
+
+      <tr><td>{{ forloop.counter }}: {{ item.text }}</td></tr>
+
+    {% endfor %}
+
+  </table>
+
+{% endblock %}
