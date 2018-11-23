@@ -25,7 +25,7 @@ class NewVisitorTest(FunctionalTest):
 
         # She is invited to enter a to-do item straight away
 
-        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox = self.get_item_input_box()
 
         self.assertEqual(
 
@@ -61,7 +61,7 @@ class NewVisitorTest(FunctionalTest):
 
         # methodical)
 
-        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox = self.get_item_input_box()
 
         inputbox.send_keys('Use peacock feathers to make a fly')
 

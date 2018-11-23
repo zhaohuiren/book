@@ -1,39 +1,36 @@
 from django.shortcuts import redirect, render
 
-from lists.models import Item, List
+from lists.forms import ExistingListItemForm, ItemForm
 
-from django.core.exceptions import ValidationError
-from django.utils.html import escape
+from lists.forms import ItemForm
+
+from lists.models import List
+
+
+
 def home_page(request):
 
-    return render(request, 'home.html')
+    return render(request, 'home.html', {'form': ItemForm()})
 
 
 
 
-#新列表
+
 def new_list(request):
 
-    list_ = List.objects.create()
+    form = ItemForm(data=request.POST)
 
-    item = Item(text=request.POST['item_text'], list=list_)
+    if form.is_valid():
 
-    try:
+        list_ = List.objects.create()
 
-        item.full_clean()
+        form.save(for_list=list_)
 
-        item.save()
+        return redirect(list_)
 
-    except ValidationError:
+    else:
 
-        list_.delete()
-
-        error = "请输入内容"
-
-        return render(request, 'home.html', {"error": error})
-
-    return redirect(list_)
-
+        return render(request, 'home.html', {"form": form})
 
 
 
@@ -44,26 +41,16 @@ def view_list(request, list_id):
 
     list_ = List.objects.get(id=list_id)
 
-    error = None
-
-
+    form = ExistingListItemForm(for_list=list_)
 
     if request.method == 'POST':
 
-        try:
-            item = Item(text=request.POST['item_text'], list=list_)
+        form = ExistingListItemForm(for_list=list_, data=request.POST)
 
-            item.full_clean()
+        if form.is_valid():
 
-            item.save()
+            form.save()
 
             return redirect(list_)
 
-        except ValidationError:
-
-            error = "You can't have an empty list item"
-
-
-
-    return render(request, 'list.html', {'list': list_, 'error': error})
-
+    return render(request, 'list.html', {'list': list_, "form": form})
